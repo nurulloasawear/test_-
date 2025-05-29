@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elementlar 1</title>
+    <link rel="stylesheet" href="../asserts/css/style.css">
+    <style>
+        /* Qo'shimcha stillar kerak bo'lsa */
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Elementlar 1</h1>
+        <nav>
+            <ul>
+                <li><a href="dashboard.html">Boshqaruv</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="crud-section">
+            <h2>Elementlar Ro'yxati</h2>
+            <table id="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nomi</th>
+                        <th>Tavsifi</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody id="data-body">
+                    </tbody>
+            </table>
+        </section>
+        <section class="form-section">
+            <h2>Yangi Element Qo'shish</h2>
+            <form id="crud-form">
+                <div class="form-group">
+                    <label for="name">Nomi:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Tavsifi:</label>
+                    <textarea id="description" name="description"></textarea>
+                </div>
+                <input type="hidden" id="id" name="id">
+                <button type="submit">Saqlash</button>
+                <button type="button" id="cancel-edit" style="display:none;">Bekor qilish</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Loyiha 1</p>
+    </footer>
+    <script src="../asserts/js/scripts.js"></script>
+</body>
+</html>

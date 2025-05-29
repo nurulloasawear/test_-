@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard 1</title>
+    <link rel="stylesheet" href="../asserts/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Boshqaruv Paneli 1</h1>
+        <div class="user-info">
+            <span id="username-display"></span>
+            <button id="logout-btn">Chiqish</button>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Bosh sahifa</a></li>
+                <li><a href="#">Elementlar</a></li>
+                <li><a href="#">Statistikalar</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="overview">
+            <h2>Umumiy Ko'rinish</h2>
+            <div class="widget">
+                <h3>Jami Elementlar</h3>
+                <p class="number">100</p>
+            </div>
+            <div class="widget">
+                <h3>Jami Statistikalar</h3>
+                <p class="number">50</p>
+            </div>
+        </section>
+        <section class="item-list">
+            <h2>Oxirgi Elementlar</h2>
+            <table id="item-table">
+                <thead>
+                    <tr>
+                        <th>Nomi</th>
+                        <th>Tavsifi</th>
+                    </tr>
+                </thead>
+                <tbody id="item-body">
+                    </tbody>
+            </table>
+        </section>
+        <section class="statistic-list">
+            <h2>Statistikalar</h2>
+            <table id="statistic-table">
+                <thead>
+                    <tr>
+                        <th>Sarlavha</th>
+                        <th>Qiymat</th>
+                        <th>Vaqti</th>
+                    </tr>
+                </thead>
+                <tbody id="statistic-body">
+                    </tbody>
+            </table>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Loyiha 1</p>
+    </footer>
+    <script src="../asserts/js/scripts.js"></script>
+</body>
+</html>

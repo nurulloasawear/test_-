@@ -1,0 +1,48 @@
+name: EC2 Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            echo "🔄 Updating server..."
+            sudo apt update -y
+            sudo apt install -y python3-pip
+
+            echo "📁 Cloning repo or pulling latest changes..."
+            cd ~
+            if [ -d "test_-" ]; then
+              cd test_- && git pull
+            else
+              git clone https://github.com/nurulloasawear/test_-.git
+              cd test_-
+            fi
+
+            echo "🐍 Installing requirements (if any)..."
+            pip3 install -r requirements.txt || true
+
+            echo "🚀 Starting backend (Django)..."
+            pkill -f "manage.py runserver" || true
+            nohup python3 manage.py runserver 0.0.0.0:8000 &
+
+            echo "🌐 Starting frontend (http.server)..."
+            pkill -f "http.server" || true
+            cd frontend
+            nohup python3 -m http.server 5500 &

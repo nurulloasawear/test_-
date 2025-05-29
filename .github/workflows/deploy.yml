@@ -1,48 +1,46 @@
-name: EC2 Deployment
+steps:
+  - name: Checkout code
+    uses: actions/checkout@v3
 
-on:
-  push:
-    branches:
-      - main
-      - master
+  - name: Deploy to EC2 via SSH
+    uses: appleboy/ssh-action@master
+    with:
+      host: ${{ secrets.EC2_HOST }}
+      username: ubuntu
+      key: ${{ secrets.EC2_KEY }}
+      script: |
+        echo "🔄 Updating system..."
+        sudo apt update -y
+        sudo apt install -y python3-pip python3-venv
 
-jobs:
-  deploy:
-    name: Deploy to EC2
-    runs-on: ubuntu-latest
+        echo "📁 Cloning repo or pulling latest changes..."
+        cd ~
+        if [ -d "test_-" ]; then
+          cd test_- && git pull
+        else
+          git clone https://github.com/nurulloasawear/test_-.git
+          cd test_-
+        fi
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+        echo "🐍 Setting up virtual environment..."
+        python3 -m venv venv
+        source venv/bin/activate
 
-      - name: Deploy to EC2 via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-            echo "🔄 Updating server..."
-            sudo apt update -y
-            sudo apt install -y python3-pip
+        echo "📦 Installing requirements..."
+        pip install --upgrade pip
+        pip install -r requirements.txt || true
 
-            echo "📁 Cloning repo or pulling latest changes..."
-            cd ~
-            if [ -d "test_-" ]; then
-              cd test_- && git pull
-            else
-              git clone https://github.com/nurulloasawear/test_-.git
-              cd test_-
-            fi
+        echo "💥 Killing previous backend if running..."
+        pkill -f "manage.py runserver" || true
 
-            echo "🐍 Installing requirements (if any)..."
-            pip3 install -r requirements.txt || true
+        echo "🚀 Starting backend..."
+        nohup venv/bin/python manage.py runserver 0.0.0.0:8000 > backend.log 2>&1 &
 
-            echo "🚀 Starting backend (Django)..."
-            pkill -f "manage.py runserver" || true
-            nohup python3 manage.py runserver 0.0.0.0:8000 &
+        echo "💥 Killing previous frontend if running..."
+        pkill -f "http.server" || true
 
-            echo "🌐 Starting frontend (http.server)..."
-            pkill -f "http.server" || true
-            cd frontend
-            nohup python3 -m http.server 5500 &
+        echo "🌐 Starting frontend..."
+        cd frontend
+        nohup python3 -m http.server 5500 > frontend.log 2>&1 &
+
+        echo "✅ Deployment complete."

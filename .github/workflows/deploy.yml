@@ -1,57 +1,43 @@
-name: EC2 Deployment
+steps:
+  - name: Checkout code
+    uses: actions/checkout@v3
 
-on:
-  push:
-    branches:
-      - main
+  - name: Deploy to EC2 via SSH
+    uses: appleboy/ssh-action@master
+    with:
+      host: ${{ secrets.EC2_HOST }}
+      username: ubuntu
+      key: ${{ secrets.EC2_KEY }}
+      script: |
+        echo "📦 Updating system..."
+        sudo apt update -y
+        sudo apt install -y python3-pip python3-venv git tmux
 
+        echo "📁 Cloning or updating repo..."
+        cd ~
+        if [ -d "test_-" ]; then
+          cd test_- && git pull
+        else
+          git clone https://github.com/nurulloasawear/test_-.git
+          cd test_-
+        fi
 
-jobs:
-  deploy:
-    name: Deploy to EC2
-    runs-on: ubuntu-latest
+        echo "⚙️ Setting up virtual environment..."
+        python3 -m venv venv
+        source venv/bin/activate
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+        echo "🐍 Installing requirements..."
+        pip install --upgrade pip
+        if [ -f "requirements.txt" ]; then
+          pip install -r requirements.txt
+        fi
 
-      - name: Deploy to EC2 via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-            echo "🔄 Updating server…"
-            sudo apt update -y
-            sudo apt install -y python3-pip python3-venv git
+        echo "🚀 Restarting backend server with tmux..."
+        tmux kill-session -t backend || true
+        tmux new-session -d -s backend "cd ~/test_- && source venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
 
-            echo "📁 Cloning repo or pulling latest changes…"
-            cd ~
-            if [ -d "test_-" ]; then
-              cd test_-
-              git pull
-            else
-              git clone https://github.com/nurulloasawear/test_-.git
-              cd test_-
-            fi
+        echo "🌐 Restarting frontend server with tmux..."
+        tmux kill-session -t frontend || true
+        tmux new-session -d -s frontend "cd ~/test_-/frontend && python3 -m http.server 5500"
 
-            echo "⚙️ Setting up virtual environment…"
-            python3 -m venv venv
-            # Aktivlashtirish
-            source venv/bin/activate
-
-            echo "🐍 Installing requirements…"
-            if [ -f requirements.txt ]; then
-              pip install --upgrade pip
-              pip install -r requirements.txt
-            fi
-
-            echo "🚀 Starting backend (Django)…"
-            pkill -f "manage.py runserver" || true
-            nohup venv/bin/python manage.py runserver 0.0.0.0:8000 > backend.log 2>&1 &
-
-            echo "🌐 Starting frontend (http.server)…"
-            pkill -f "http.server" || true
-            cd frontend
-            nohup venv/bin/python -m http.server 5500 > frontend.log 2>&1 &
+        echo "✅ Deployment complete."

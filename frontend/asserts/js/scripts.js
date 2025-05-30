@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadItems() {
-        fetch('/api/api_1/items/') // Sizning API manzilingizga moslang (Loyiha 1)
+        fetch('http://16.171.141.168:8000/api/api_1/items/') // Sizning API manzilingizga moslang (Loyiha 1)
             .then(response => response.json())
             .then(data => displayItems(data))
             .catch(error => console.error('Elementlarni olishda xatolik (Loyiha 1):', error));
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const itemData = { name: name, description: description };
             const method = id ? 'PUT' : 'POST';
-            const url = id ? `/api/api_1/items/${id}/` : '/api/api_1/items/'; // Sizning API manzilingizga moslang (Loyiha 1)
+            const url = id ? `http://16.171.141.168:8000/api/api_1/items/${id}/` : 'http://16.171.141.168:8000/api/api_1/items/'; // Sizning API manzilingizga moslang (Loyiha 1)
 
             fetch(url, {
                 method: method,
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function editItem(id) {
-        fetch(`/api/api_1/items/${id}/`) // Sizning API manzilingizga moslang (Loyiha 1)
+        fetch(`http://16.171.141.168:8000/api/api_1/items/${id}/`) // Sizning API manzilingizga moslang (Loyiha 1)
             .then(response => response.json())
             .then(item => {
                 document.getElementById('id').value = item.id;
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function deleteItem(id) {
         if (confirm('Elementni o\'chirishga ishonchingiz komilmi?')) {
-            fetch(`/api/api_1/items/${id}/`, { // Sizning API manzilingizga moslang (Loyiha 1)
+            fetch(`http://16.171.141.168:8000/api/api_1/items/${id}/`, { // Sizning API manzilingizga moslang (Loyiha 1)
                 method: 'DELETE',
                 // Agar kerak bo'lsa, token qo'shing: 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
             })
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadStatistics() {
-        fetch('/api/api_2/statistics/') // Sizning API manzilingizga moslang (Loyiha 1)
+        fetch('http://16.171.141.168:8000/api/api_2/statistics/') // Sizning API manzilingizga moslang (Loyiha 1)
             .then(response => response.json())
             .then(data => displayStatistics(data))
             .catch(error => console.error('Statistikalarni olishda xatolik (Loyiha 1):', error));
